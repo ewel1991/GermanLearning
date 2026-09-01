@@ -1,0 +1,57 @@
+"use server";
+
+import Anthropic from "@anthropic-ai/sdk";
+import type { VocabExtractionItem, ActionError } from "@/lib/types";
+
+const SYSTEM_PROMPT = `Du bist ein Deutschlehrer für das Niveau B2/C1.
+Extrahiere aus dem folgenden Text genau 10 Vokabeleinträge, die für Deutschlernende auf B2/C1-Niveau relevant sind.
+
+Priorisiere:
+- Nomen-Verb-Verbindungen (z. B. "eine Entscheidung treffen")
+- Kollokationen und feste Wendungen
+- idiomatische Ausdrücke
+- formelle Konnektoren (z. B. "dennoch", "insofern", "nichtsdestotrotz")
+
+Wenn der Text ein gesprochenes Transkript ist, beziehe zusätzlich Diskursmarker und
+gesprochene, aber gehobene Register-Ausdrücke mit ein.
+
+Gib ausschließlich ein rohes JSON-Array zurück, ohne Markdown, ohne Code-Fences, in genau diesem Format:
+[{ "term": string, "definition_de": string, "example_sentence": string }]
+
+"definition_de" ist eine deutschsprachige Definition (kein Englisch, keine Übersetzung).
+"example_sentence" ist ein neuer Beispielsatz, der den Begriff im Kontext verwendet.`;
+
+export async function extractVocabulary(
+  text: string
+): Promise<VocabExtractionItem[] | ActionError> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
+  }
+
+  const client = new Anthropic();
+
+  let raw: string;
+  try {
+    const response = await client.messages.create({
+      model: "claude-sonnet-5",
+      max_tokens: 2000,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: text }],
+    });
+
+    const textBlock = response.content.find((block) => block.type === "text");
+    if (!textBlock || textBlock.type !== "text") {
+      return { error: "Claude hat keinen Text zurückgegeben." };
+    }
+    raw = textBlock.text;
+  } catch {
+    return { error: "Anfrage an Claude ist fehlgeschlagen." };
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as VocabExtractionItem[];
+    return parsed.slice(0, 10);
+  } catch {
+    return { error: "Antwort von Claude konnte nicht als JSON gelesen werden." };
+  }
+}
