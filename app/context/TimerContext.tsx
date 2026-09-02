@@ -10,17 +10,18 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 
-// Three independent per-screen countdowns (not one 25-minute clock) — each
+// Four independent per-screen countdowns (not one 25-minute clock) — each
 // screen gets its own time budget, and only the slot matching the current
 // route ticks down. Navigating away pauses it by substitution; navigating
 // back resumes it right where it was, since the remaining values live here
 // in Context rather than in a component that could unmount.
-const SLOT_SECONDS = [8 * 60, 8 * 60, 9 * 60]; // Screen 1, 2, 3
-const SLOT_LABELS = ["Vokabular", "Grammatik", "Tutor"];
+const SLOT_SECONDS = [8 * 60, 8 * 60, 9 * 60, 5 * 60]; // Screen 1, 2, 3, 4
+const SLOT_LABELS = ["Vokabular", "Grammatik", "Tutor", "Wiederholung"];
 const PATH_TO_SLOT: Record<string, number> = {
   "/screen1": 0,
   "/screen2": 1,
   "/screen3": 2,
+  "/screen4": 3,
 };
 
 interface TimerContextValue {

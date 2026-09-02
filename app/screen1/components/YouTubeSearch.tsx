@@ -40,8 +40,8 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
   }
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+    <div className="rounded-xl border border-white/10 bg-surface p-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
         {videos.map((video) => (
           <button
             key={video.videoId}
@@ -49,8 +49,8 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
             onClick={() => selectVideo(video.videoId)}
             className={`rounded-xl border p-2 text-left text-xs transition ${
               selectedVideoId === video.videoId
-                ? "border-gold ring-2 ring-gold/40"
-                : "border-ink/10 hover:border-ink/25"
+                ? "border-blue ring-2 ring-blue/40"
+                : "border-white/10 hover:border-white/25"
             }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -59,10 +59,10 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
               alt={video.title}
               className="mb-1 w-full rounded-lg"
             />
-            <div className="line-clamp-2 font-medium text-ink">
+            <div className="line-clamp-2 font-medium text-fg">
               {video.title}
             </div>
-            <div className="text-slate">
+            <div className="text-muted">
               {video.channelTitle} · {video.duration}
             </div>
           </button>
@@ -84,7 +84,7 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
             type="button"
             onClick={handleLoadTranscript}
             disabled={loadingTranscript}
-            className="mt-2 rounded-xl bg-navy px-3 py-2 text-sm font-medium text-parchment disabled:opacity-40"
+            className="mt-2 rounded-xl bg-surface2 px-3 py-2 text-sm font-medium text-fg disabled:opacity-40"
           >
             {loadingTranscript ? "Lädt…" : "Transkript laden"}
           </button>
@@ -96,7 +96,7 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
           )}
 
           {transcript && (
-            <div className="mt-3 max-h-[60vh] overflow-y-auto rounded-xl border border-ink/10 bg-parchment p-3 text-sm leading-relaxed text-ink">
+            <div className="mt-3 max-h-[60vh] overflow-y-auto rounded-xl border border-white/10 bg-surface2 p-3 text-sm leading-relaxed text-fg">
               {transcript}
             </div>
           )}

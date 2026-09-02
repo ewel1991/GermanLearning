@@ -5,29 +5,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#14152B",
-        navy: {
-          DEFAULT: "#1B2145",
-          light: "#2A3164",
+        bg: "#10141F",
+        surface: "#1B2233",
+        surface2: "#262F45",
+        blue: {
+          DEFAULT: "#4C7DFF",
+          deep: "#3A64D8",
         },
-        parchment: "#FAF6EC",
-        paper: "#FFFDF8",
-        gold: {
-          DEFAULT: "#C8922F",
-          deep: "#9C701F",
-          light: "#EACB8B",
-        },
-        rose: "#B5506B",
-        moss: "#5B7A5E",
-        rust: "#B5482F",
-        slate: "#6B7086",
+        mint: "#34D399",
+        violet: "#A78BFA",
+        rust: "#F16571",
+        fg: "#F2F4F9",
+        muted: "#8B93A8",
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "Georgia", "serif"],
-        sans: ["var(--font-plex)", "system-ui", "sans-serif"],
+        display: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        sans: ["var(--font-jakarta)", "system-ui", "sans-serif"],
       },
       borderRadius: {
-        xl: "0.75rem",
+        xl: "0.875rem",
+        "2xl": "1.25rem",
       },
     },
   },

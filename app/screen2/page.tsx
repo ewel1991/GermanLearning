@@ -3,47 +3,87 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { identifyGrammar } from "@/app/actions/identifyGrammar";
-import type { GrammarResult } from "@/app/actions/identifyGrammar";
-import { readCurrentContent } from "@/lib/currentContent";
+import { generateGrammarForTopic } from "@/app/actions/generateGrammarForTopic";
+import {
+  CURRENT_CONTENT_EVENT,
+  readCurrentContent,
+  type ContentSource,
+} from "@/lib/currentContent";
+import { useSession } from "@/app/context/SessionContext";
 import GrammarCard from "./components/GrammarCard";
 import ParaphraseExercise from "./components/ParaphraseExercise";
 
 export default function Screen2Page() {
-  // null = not checked yet, "" = checked and empty, string = article text
-  const [article, setArticle] = useState<string | null>(null);
+  // The generated grammar (+ the exercise's answer/evaluation) lives in
+  // SessionContext, keyed to the content "version" it was generated for —
+  // so returning to this screen reuses it instead of paying for a fresh
+  // (and non-deterministic) generation every time.
+  const { grammar: grammarState, setGrammar } = useSession();
+  const [status, setStatus] = useState<"checking" | "empty" | "ready">("checking");
+  const [source, setSource] = useState<ContentSource>("text");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [grammar, setGrammar] = useState<GrammarResult | null>(null);
 
   useEffect(() => {
-    const { article: currentArticle } = readCurrentContent();
-    const text = currentArticle ?? "";
-    setArticle(text);
+    function sync() {
+      const { article, topic, source: currentSource, version } = readCurrentContent();
+      const hasText = currentSource === "text" && !!article;
+      const hasTopic = currentSource === "topic" && !!topic;
 
-    if (text) {
+      if (!hasText && !hasTopic) {
+        setStatus("empty");
+        return;
+      }
+
+      setSource(currentSource);
+      setStatus("ready");
+
+      // Already generated for this exact content — reuse it, no new request.
+      if (grammarState.grammar && grammarState.generatedForVersion === version) {
+        return;
+      }
+
+      setError(null);
       setLoading(true);
-      identifyGrammar(text).then((result) => {
+      const request =
+        currentSource === "topic" && topic
+          ? generateGrammarForTopic(topic.title)
+          : identifyGrammar(article ?? "");
+
+      request.then((result) => {
         if ("error" in result) {
           setError(result.error);
         } else {
-          setGrammar(result);
+          setGrammar({
+            grammar: result,
+            generatedForVersion: version,
+            paraphraseAnswer: "",
+            paraphraseEvaluation: null,
+          });
         }
         setLoading(false);
       });
     }
+
+    sync();
+    window.addEventListener(CURRENT_CONTENT_EVENT, sync);
+    return () => window.removeEventListener(CURRENT_CONTENT_EVENT, sync);
+    // Runs once on mount (plus on content-change events) by design — re-reads
+    // grammarState fresh from context each time via the closure below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (article === null) {
+  if (status === "checking") {
     return null; // still checking localStorage
   }
 
-  if (article === "") {
+  if (status === "empty") {
     return (
       <main className="mx-auto max-w-2xl p-4 md:p-8">
-        <p className="text-slate">
+        <p className="text-muted">
           Bitte zuerst einen Artikel in Screen 1 laden.
         </p>
-        <Link href="/screen1" className="mt-2 inline-block text-sm font-medium text-gold-deep hover:underline">
+        <Link href="/screen1" className="mt-2 inline-block text-sm font-medium text-blue hover:underline">
           Zu Screen 1
         </Link>
       </main>
@@ -52,19 +92,26 @@ export default function Screen2Page() {
 
   return (
     <main className="mx-auto max-w-3xl p-4 md:p-8">
-      <h1 className="mb-6 font-display text-2xl font-semibold text-ink">
+      <h1 className="mb-6 font-display text-2xl font-bold text-fg">
         Grammatik &amp; Umformung
       </h1>
 
-      {loading && <p className="text-sm text-slate">Analysiert Artikel…</p>}
+      {source === "topic" && (
+        <p className="mb-4 text-xs text-muted">
+          Themenbasiert generiert (kein Transkript verfügbar) — nicht aus dem
+          konkreten Podcast-Inhalt analysiert.
+        </p>
+      )}
+
+      {loading && <p className="text-sm text-muted">Analysiert Artikel…</p>}
       {error && <p className="text-sm text-rust">{error}</p>}
 
-      {grammar && (
+      {grammarState.grammar && (
         <>
-          <GrammarCard result={grammar} />
+          <GrammarCard result={grammarState.grammar} />
           <ParaphraseExercise
-            baseSentence={grammar.base_sentence}
-            structureName={grammar.structure_name}
+            baseSentence={grammarState.grammar.base_sentence}
+            structureName={grammarState.grammar.structure_name}
           />
         </>
       )}

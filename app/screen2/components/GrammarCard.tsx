@@ -9,7 +9,7 @@ function highlight(sentence: string, term: string): React.ReactNode {
   return (
     <>
       {sentence.slice(0, index)}
-      <span className="font-medium text-gold-deep">
+      <span className="font-medium text-mint">
         {sentence.slice(index, index + term.length)}
       </span>
       {sentence.slice(index + term.length)}
@@ -19,11 +19,11 @@ function highlight(sentence: string, term: string): React.ReactNode {
 
 export default function GrammarCard({ result }: { result: GrammarResult }) {
   return (
-    <div className="rounded-xl border border-ink/10 bg-paper p-4">
-      <h2 className="font-display text-lg font-semibold text-ink">
+    <div className="rounded-xl border border-white/10 bg-surface p-4">
+      <h2 className="font-display text-lg font-bold text-fg">
         {result.structure_name}
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-ink/80">
+      <p className="mt-2 text-sm leading-relaxed text-fg/80">
         {result.explanation}
       </p>
 
@@ -31,7 +31,7 @@ export default function GrammarCard({ result }: { result: GrammarResult }) {
         {result.example_sentences.map((sentence, index) => (
           <li
             key={index}
-            className="rounded-lg border border-ink/10 bg-parchment p-2 text-sm italic text-ink"
+            className="rounded-lg border border-white/10 bg-surface2 p-2 text-sm italic text-fg"
           >
             {/* key_clause is looked up independently in each sentence — see plan note */}
             {highlight(sentence, result.key_clause)}

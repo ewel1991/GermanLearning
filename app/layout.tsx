@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import { TimerProvider } from "./context/TimerContext";
+import { SessionProvider } from "./context/SessionContext";
 
-const fraunces = Fraunces({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -29,12 +23,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="de" className={`${fraunces.variable} ${plexSans.variable}`}>
-      <body className="min-h-screen bg-parchment font-sans text-ink">
-        <TimerProvider>
-          <NavBar />
-          {children}
-        </TimerProvider>
+    <html lang="de" className={jakarta.variable}>
+      <body className="min-h-screen bg-bg font-sans text-fg">
+        <SessionProvider>
+          <TimerProvider>
+            <NavBar />
+            {children}
+          </TimerProvider>
+        </SessionProvider>
       </body>
     </html>
   );

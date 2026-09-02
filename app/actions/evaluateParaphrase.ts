@@ -1,6 +1,7 @@
 "use server";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { ActionError } from "@/lib/types";
 
 export interface EvaluationResult {
@@ -51,7 +52,8 @@ Antwort des Lernenden: ${input.user_answer}`;
   try {
     const response = await client.messages.create({
       model: "claude-sonnet-5",
-      max_tokens: 1500,
+      max_tokens: 4096,
+      output_config: { effort: "low" },
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
     });
@@ -66,7 +68,7 @@ Antwort des Lernenden: ${input.user_answer}`;
   }
 
   try {
-    return JSON.parse(raw) as EvaluationResult;
+    return parseClaudeJson<EvaluationResult>(raw);
   } catch {
     return { error: "Antwort von Claude konnte nicht als JSON gelesen werden." };
   }

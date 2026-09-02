@@ -1,1 +1,41 @@
-[]
+[
+  {
+    "id": "80c20ea2-eabe-4046-9d88-d32b327200e6",
+    "topic_id": 1,
+    "topic_title": "Morgenroutine und Abendritual",
+    "term": "eine Entscheidung treffen",
+    "definition_de": "sich nach Abwägung für eine bestimmte Option entscheiden",
+    "example_sentence": "Am Morgen, wenn der Kopf noch klar ist, fällt es vielen leichter, wichtige Entscheidungen zu treffen.",
+    "saved_at": "2026-09-02T17:48:04.524Z",
+    "next_review_at": "2026-09-03T19:23:14.674Z",
+    "review_interval_days": 1,
+    "ease_factor": 2.5,
+    "review_count": 1
+  },
+  {
+    "id": "5422ae0c-3629-4e8d-b7a2-61abef98f8b3",
+    "topic_id": 9,
+    "topic_title": "Zeitmanagement und Produktivität",
+    "term": "unter den Tisch fallen",
+    "definition_de": "Vernachlässigt oder vergessen werden, oft weil andere Dinge wichtiger erscheinen.",
+    "example_sentence": "Bei so vielen dringenden Terminen fielen die kleineren Aufgaben schnell unter den Tisch.",
+    "saved_at": "2026-09-02T19:05:33.646Z",
+    "next_review_at": "2026-09-03T19:24:48.745Z",
+    "review_interval_days": 1,
+    "ease_factor": 2.1799999999999997,
+    "review_count": 1
+  },
+  {
+    "id": "7b6464b7-e0cd-48c3-8855-1b1915be0675",
+    "topic_id": 9,
+    "topic_title": "Zeitmanagement und Produktivität",
+    "term": "kurz vor knapp",
+    "definition_de": "In letzter Minute, unmittelbar bevor eine Frist abläuft.",
+    "example_sentence": "Er reichte den Bericht wieder einmal kurz vor knapp ein, obwohl er genug Zeit gehabt hätte.",
+    "saved_at": "2026-09-02T19:05:37.644Z",
+    "next_review_at": "2026-09-03T19:24:14.396Z",
+    "review_interval_days": 1,
+    "ease_factor": 2.5,
+    "review_count": 1
+  }
+]

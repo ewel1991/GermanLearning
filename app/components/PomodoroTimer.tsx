@@ -35,7 +35,7 @@ export default function PomodoroTimer() {
     <div className="relative flex items-center gap-1.5">
       <div
         className={`flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-sm ${
-          pulsing ? "animate-pulse bg-moss text-white" : "bg-navy-light text-parchment"
+          pulsing ? "animate-pulse bg-mint text-bg" : "bg-surface2 text-fg"
         }`}
       >
         <span className="font-medium">{activeSlotLabel}</span>
@@ -46,7 +46,7 @@ export default function PomodoroTimer() {
         type="button"
         onClick={start}
         disabled={isRunning}
-        className="rounded-xl bg-gold px-2.5 py-1.5 text-xs font-medium text-ink disabled:opacity-40"
+        className="rounded-xl bg-blue px-2.5 py-1.5 text-xs font-medium text-white disabled:opacity-40"
       >
         Start
       </button>
@@ -54,20 +54,20 @@ export default function PomodoroTimer() {
         type="button"
         onClick={pause}
         disabled={!isRunning}
-        className="rounded-xl bg-navy-light px-2.5 py-1.5 text-xs font-medium text-parchment disabled:opacity-40"
+        className="rounded-xl bg-surface2 px-2.5 py-1.5 text-xs font-medium text-fg disabled:opacity-40"
       >
         Pause
       </button>
       <button
         type="button"
         onClick={reset}
-        className="rounded-xl px-2.5 py-1.5 text-xs font-medium text-parchment/70 hover:text-parchment"
+        className="rounded-xl px-2.5 py-1.5 text-xs font-medium text-muted hover:text-fg"
       >
         Reset
       </button>
 
       {justFinishedSlot !== null && (
-        <div className="absolute right-0 top-full mt-2 rounded-xl bg-moss px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+        <div className="absolute right-0 top-full mt-2 rounded-xl bg-mint px-3 py-1.5 text-xs font-medium text-bg shadow-lg">
           Zeit für Screen {justFinishedSlot + 1}!
         </div>
       )}

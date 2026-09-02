@@ -4,16 +4,16 @@
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   ::selection {
-    background-color: theme("colors.gold.light");
-    color: theme("colors.ink");
+    background-color: theme("colors.blue.DEFAULT / 35%");
+    color: theme("colors.fg");
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.gold.DEFAULT");
+    outline: 2px solid theme("colors.blue.DEFAULT");
     outline-offset: 2px;
   }
 }

@@ -60,5 +60,6 @@ export async function searchArticle(
     url: pick.url,
     published_date: pick.published_date ?? null,
     content: pick.raw_content ?? pick.content,
+    preview: pick.content,
   };
 }

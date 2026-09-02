@@ -8,11 +8,9 @@ export default function FeedbackPanel({
 }) {
   if (!feedback) {
     return (
-      <section className="rounded-xl border border-ink/10 bg-paper p-4">
-        <h2 className="mb-3 font-display font-semibold text-ink">
-          Feedback
-        </h2>
-        <p className="text-sm text-slate">
+      <section className="rounded-xl border border-white/10 bg-surface p-4">
+        <h2 className="mb-3 font-display font-bold text-fg">Feedback</h2>
+        <p className="text-sm text-muted">
           Sobald Sie eine Nachricht senden, erscheint hier Ihr Feedback.
         </p>
       </section>
@@ -21,7 +19,7 @@ export default function FeedbackPanel({
 
   return (
     <section className="space-y-3">
-      <h2 className="font-display font-semibold text-ink">Feedback</h2>
+      <h2 className="font-display font-bold text-fg">Feedback</h2>
 
       <CollapsibleSection title="Grammatik & Orthografie">
         {feedback.grammar_errors.length === 0 ? (
@@ -47,7 +45,7 @@ export default function FeedbackPanel({
                 <div>
                   💬 {upgrade.user} → ✨ {upgrade.c1}
                 </div>
-                <div className="text-xs text-slate">{upgrade.note}</div>
+                <div className="text-xs text-muted">{upgrade.note}</div>
               </li>
             ))}
           </ul>

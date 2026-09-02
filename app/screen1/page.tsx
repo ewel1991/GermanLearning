@@ -10,11 +10,11 @@ export default async function Screen1Page() {
   const topics = await getTopics();
 
   return (
-    <main className="mx-auto max-w-6xl p-4 md:p-8">
-      <h1 className="mb-6 font-display text-2xl font-semibold text-ink">
+    <main className="mx-auto max-w-4xl p-4 md:p-8">
+      <h1 className="mb-6 font-display text-2xl font-bold text-fg">
         Deutsch Lernen — B2/C1
       </h1>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="flex flex-col gap-6">
         <ContentViewer topics={topics} />
         <VocabularyPanel />
       </div>

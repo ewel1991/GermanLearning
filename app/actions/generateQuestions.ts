@@ -1,6 +1,7 @@
 "use server";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { ActionError } from "@/lib/types";
 
 interface GenerateQuestionsInput {
@@ -35,7 +36,8 @@ Vokabeln: ${input.terms.length > 0 ? input.terms.join(", ") : "(keine)"}`;
   try {
     const response = await client.messages.create({
       model: "claude-sonnet-5",
-      max_tokens: 1000,
+      max_tokens: 2048,
+      output_config: { effort: "low" },
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userMessage }],
     });
@@ -50,7 +52,7 @@ Vokabeln: ${input.terms.length > 0 ? input.terms.join(", ") : "(keine)"}`;
   }
 
   try {
-    return JSON.parse(raw) as string[];
+    return parseClaudeJson<string[]>(raw);
   } catch {
     return { error: "Antwort von Claude konnte nicht als JSON gelesen werden." };
   }

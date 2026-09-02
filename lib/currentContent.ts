@@ -12,15 +12,40 @@ export interface CurrentTopic {
   title: string;
 }
 
-export function saveCurrentContent(text: string, topic: CurrentTopic): void {
+// "text" = real source text is available (article/transcript/upload) — feed
+// it to extractVocabulary/identifyGrammar. "topic" = no source text exists
+// (Spotify podcasts have no transcript) — generate content for the topic
+// name instead, via generateVocabularyForTopic/generateGrammarForTopic.
+export type ContentSource = "text" | "topic";
+
+export function saveCurrentContent(
+  text: string,
+  topic: CurrentTopic,
+  source: ContentSource = "text"
+): void {
+  // Bumped on every save so consumers (Grammatik) can tell whether a cached
+  // result still matches the content it was generated from, or is stale.
+  const version = Number(localStorage.getItem("current_version") ?? "0") + 1;
   localStorage.setItem("current_article", text);
   localStorage.setItem("current_topic", JSON.stringify(topic));
+  localStorage.setItem("current_source", source);
+  localStorage.setItem("current_version", String(version));
+  window.dispatchEvent(new Event(CURRENT_CONTENT_EVENT));
+}
+
+export function clearCurrentContent(): void {
+  localStorage.removeItem("current_article");
+  localStorage.removeItem("current_topic");
+  localStorage.removeItem("current_source");
+  localStorage.removeItem("current_version");
   window.dispatchEvent(new Event(CURRENT_CONTENT_EVENT));
 }
 
 export function readCurrentContent(): {
   article: string | null;
   topic: CurrentTopic | null;
+  source: ContentSource;
+  version: number;
 } {
   const article = localStorage.getItem("current_article");
   const rawTopic = localStorage.getItem("current_topic");
@@ -32,5 +57,7 @@ export function readCurrentContent(): {
       topic = null;
     }
   }
-  return { article, topic };
+  const source = (localStorage.getItem("current_source") as ContentSource | null) ?? "text";
+  const version = Number(localStorage.getItem("current_version") ?? "0");
+  return { article, topic, source, version };
 }

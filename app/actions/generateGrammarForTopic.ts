@@ -3,22 +3,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { ActionError } from "@/lib/types";
+import type { GrammarResult } from "./identifyGrammar";
 
-// Interfaces are erased at compile time, so exporting one alongside the
-// file's single "use server" async function doesn't violate the
-// server-action-file export rule (only runtime bindings must be async fns).
-export interface GrammarResult {
-  structure_name: string;
-  explanation: string;
-  example_sentences: string[];
-  key_clause: string;
-  base_sentence: string;
-}
-
+// Podcasts (Spotify) have no transcript to analyze — this generates a
+// typical B2/C1 grammar structure for the topic itself instead, same output
+// shape as identifyGrammar.ts so GrammarCard/ParaphraseExercise are unchanged.
 const SYSTEM_PROMPT = `Du bist ein Deutschlehrer für das Niveau B2/C1.
-Identifiziere im folgenden Artikeltext die EINE auffälligste B2/C1-Grammatikstruktur.
+Du bekommst ein Thema, keinen Text. Wähle EINE B2/C1-Grammatikstruktur, die beim
+Sprechen oder Schreiben über dieses Thema besonders nützlich ist.
 
-Bevorzuge in dieser Reihenfolge, je nachdem was im Text tatsächlich vorkommt:
+Wähle aus, je nachdem was zum Thema passt:
 - Partizipialattribute
 - Passiversatzformen (sein + zu / lassen + sich)
 - Nomen-Verb-Verbindungen
@@ -29,13 +23,13 @@ Gib ausschließlich ein rohes JSON-Objekt zurück, ohne Markdown, ohne Code-Fenc
 {
   "structure_name": string,        // der deutsche linguistische Fachbegriff
   "explanation": string,           // ein Absatz auf Deutsch, B2-Register, erklärt die Struktur
-  "example_sentences": string[],   // genau 2 Sätze WÖRTLICH aus dem Artikel, die die Struktur enthalten
+  "example_sentences": string[],   // genau 2 neue Sätze zum Thema, die die Struktur enthalten
   "key_clause": string,            // der Satzteil, der in beiden Beispielsätzen hervorgehoben werden soll
   "base_sentence": string          // einer der Beispielsätze, umgeschrieben in eine einfache Version OHNE die Zielstruktur
 }`;
 
-export async function identifyGrammar(
-  articleText: string
+export async function generateGrammarForTopic(
+  topicTitle: string
 ): Promise<GrammarResult | ActionError> {
   if (!process.env.ANTHROPIC_API_KEY) {
     return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
@@ -50,7 +44,7 @@ export async function identifyGrammar(
       max_tokens: 4096,
       output_config: { effort: "low" },
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: articleText }],
+      messages: [{ role: "user", content: `Thema: ${topicTitle}` }],
     });
 
     const textBlock = response.content.find((block) => block.type === "text");
