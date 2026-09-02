@@ -2,6 +2,7 @@
 
 import { addVocabItem } from "@/lib/vocabulary";
 import type { VocabularyItem } from "@/lib/vocabulary";
+import type { ActionError } from "@/lib/types";
 
 interface SaveVocabItemInput {
   topic_id: number;
@@ -15,7 +16,7 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export async function saveVocabItem(
   input: SaveVocabItemInput
-): Promise<{ success: true }> {
+): Promise<{ success: true } | ActionError> {
   const now = new Date();
 
   // Standard SM-2 first interval: a freshly saved item is due again in 1 day.
@@ -33,7 +34,11 @@ export async function saveVocabItem(
     review_count: 0,
   };
 
-  addVocabItem(item);
+  try {
+    await addVocabItem(item);
+  } catch {
+    return { error: "Vokabular-Speicher ist nicht konfiguriert (Redis)." };
+  }
 
   return { success: true };
 }

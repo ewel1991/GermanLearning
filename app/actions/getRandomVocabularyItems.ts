@@ -17,7 +17,13 @@ function shuffle<T>(items: T[]): T[] {
 export async function getRandomVocabularyItems(
   count: number
 ): Promise<VocabularyItem[] | ActionError> {
-  const all = readVocabulary();
+  let all: VocabularyItem[];
+  try {
+    all = await readVocabulary();
+  } catch {
+    return { error: "Vokabular-Speicher ist nicht konfiguriert (Redis)." };
+  }
+
   if (all.length === 0) {
     return { error: "Noch keine gespeicherten Vokabeln." };
   }

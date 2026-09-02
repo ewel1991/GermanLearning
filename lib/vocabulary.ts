@@ -1,10 +1,13 @@
-import fs from "fs";
-import path from "path";
+import { Redis } from "@upstash/redis";
 
-const VOCABULARY_FILE_PATH = path.join(process.cwd(), "data", "vocabulary.json");
+// All saved items live under one Redis key, as a single JSON array — the fs
+// version of this file used a single JSON file the same way. This works
+// on Vercel where the deployed filesystem is read-only (fs.writeFileSync
+// would fail there); Upstash's REST API works from any serverless runtime.
+const VOCABULARY_KEY = "vocabulary";
 
 /**
- * Shape of one saved vocabulary item, as persisted in data/vocabulary.json.
+ * Shape of one saved vocabulary item.
  *
  * {
  *   "id": "uuid-string",
@@ -34,24 +37,36 @@ export interface VocabularyItem {
   review_count: number;
 }
 
-export function readVocabulary(): VocabularyItem[] {
-  const raw = fs.readFileSync(VOCABULARY_FILE_PATH, "utf-8");
-  return JSON.parse(raw) as VocabularyItem[];
+function getRedis(): Redis {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) {
+    throw new Error(
+      "UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN sind nicht gesetzt."
+    );
+  }
+  return new Redis({ url, token });
 }
 
-export function writeVocabulary(items: VocabularyItem[]): void {
-  fs.writeFileSync(VOCABULARY_FILE_PATH, JSON.stringify(items, null, 2));
+export async function readVocabulary(): Promise<VocabularyItem[]> {
+  const items = await getRedis().get<VocabularyItem[]>(VOCABULARY_KEY);
+  return items ?? [];
 }
 
-export function addVocabItem(item: VocabularyItem): void {
-  const items = readVocabulary();
+export async function writeVocabulary(items: VocabularyItem[]): Promise<void> {
+  await getRedis().set(VOCABULARY_KEY, items);
+}
+
+export async function addVocabItem(item: VocabularyItem): Promise<void> {
+  const items = await readVocabulary();
   items.push(item);
-  writeVocabulary(items);
+  await writeVocabulary(items);
 }
 
-export function getItemsDueForReview(limit: number): VocabularyItem[] {
+export async function getItemsDueForReview(limit: number): Promise<VocabularyItem[]> {
   const now = new Date().toISOString();
-  return readVocabulary()
+  const items = await readVocabulary();
+  return items
     .filter((item) => item.next_review_at <= now)
     .sort((a, b) => a.next_review_at.localeCompare(b.next_review_at))
     .slice(0, limit);

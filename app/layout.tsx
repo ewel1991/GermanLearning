@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
@@ -15,6 +15,17 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Deutsch Lernen B2/C1",
   description: "Single-user German B2/C1 learning app",
+  // Lets iOS Safari's "Zum Home-Bildschirm" open the app without browser
+  // chrome — Android's install prompt reads this from manifest.ts instead.
+  appleWebApp: {
+    capable: true,
+    title: "DeutschMeister",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1B2233",
 };
 
 export default function RootLayout({

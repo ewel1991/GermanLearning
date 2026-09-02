@@ -30,17 +30,23 @@ function highlightTerm(sentence: string, term: string): React.ReactNode {
 export default function VocabCard({ item, topic }: Props) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSave() {
     setSaving(true);
-    await saveVocabItem({
+    setError(null);
+    const result = await saveVocabItem({
       topic_id: topic.id,
       topic_title: topic.title,
       term: item.term,
       definition_de: item.definition_de,
       example_sentence: item.example_sentence,
     });
-    setSaved(true);
+    if (result && "error" in result) {
+      setError(result.error);
+    } else {
+      setSaved(true);
+    }
     setSaving(false);
   }
 
@@ -68,6 +74,7 @@ export default function VocabCard({ item, topic }: Props) {
           {saving ? "Speichert…" : "Speichern"}
         </button>
       )}
+      {error && <p className="mt-2 text-xs text-rust">{error}</p>}
     </div>
   );
 }
