@@ -25,6 +25,7 @@ interface VocabSessionState {
   article: ArticleResult | null;
   videos: YouTubeVideo[] | null;
   podcasts: PodcastEpisode[] | null;
+  uploadedFile: { name: string; preview: string } | null;
   items: VocabExtractionItem[] | null;
 }
 
@@ -59,6 +60,7 @@ const initialVocabState: VocabSessionState = {
   article: null,
   videos: null,
   podcasts: null,
+  uploadedFile: null,
   items: null,
 };
 

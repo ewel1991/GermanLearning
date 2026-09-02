@@ -28,7 +28,7 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
   // survives navigating to Grammatik/Tutor and back — only the in-flight
   // request state below (loading/error/OCR progress) resets on remount.
   const { vocab, setVocab } = useSession();
-  const { contentType, article, videos, podcasts } = vocab;
+  const { contentType, article, videos, podcasts, uploadedFile } = vocab;
   const selectedTopicId = vocab.selectedTopicId ?? topics[0]?.id ?? null;
 
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,13 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
     if (!selectedTopic) return;
     setLoading(true);
     setError(null);
-    setVocab({ article: null, videos: null, podcasts: null, items: null });
+    setVocab({
+      article: null,
+      videos: null,
+      podcasts: null,
+      uploadedFile: null,
+      items: null,
+    });
 
     if (contentType === "article") {
       const result = await searchArticle(selectedTopic.title);
@@ -80,13 +86,11 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
     setLoading(false);
   }
 
-  async function handleTextFile(file: File) {
-    const text = await file.text();
-    const topic = selectedTopic ?? { id: 0, title: "Hochgeladene Datei" };
-    saveCurrentContent(text, { id: topic.id, title: topic.title });
+  async function readTextFile(file: File): Promise<string> {
+    return file.text();
   }
 
-  async function handleImageFile(file: File) {
+  async function readImageFile(file: File): Promise<string> {
     setOcrProgress(0);
     // Loaded dynamically — Tesseract's worker code doesn't run server-side.
     const { createWorker } = await import("tesseract.js");
@@ -101,22 +105,43 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
       data: { text },
     } = await worker.recognize(file);
     await worker.terminate();
-
-    const topic = selectedTopic ?? { id: 0, title: "Hochgeladene Datei" };
-    saveCurrentContent(text, { id: topic.id, title: topic.title });
-    setOcrProgress(null);
+    return text;
   }
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.type === "text/plain" || file.name.endsWith(".txt")) {
-      await handleTextFile(file);
-    } else {
-      await handleImageFile(file);
+    setError(null);
+
+    try {
+      const isText = file.type === "text/plain" || file.name.endsWith(".txt");
+      const text = isText ? await readTextFile(file) : await readImageFile(file);
+
+      if (!text.trim()) {
+        setError(
+          isText
+            ? "Die Datei ist leer."
+            : "Im Bild wurde kein Text erkannt. Bitte ein anderes Bild versuchen."
+        );
+        return;
+      }
+
+      const topic = selectedTopic ?? { id: 0, title: "Hochgeladene Datei" };
+      saveCurrentContent(text, { id: topic.id, title: topic.title });
+      setVocab({
+        article: null,
+        videos: null,
+        podcasts: null,
+        items: null,
+        uploadedFile: { name: file.name, preview: text.slice(0, 1500) },
+      });
+    } catch {
+      setError("Datei konnte nicht gelesen werden.");
+    } finally {
+      setOcrProgress(null);
+      event.target.value = "";
     }
-    event.target.value = "";
   }
 
   return (
@@ -209,11 +234,14 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
             className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-surface2 file:px-3 file:py-2 file:text-sm file:font-medium file:text-fg"
           />
           {ocrProgress !== null && (
-            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface2">
-              <div
-                className="h-full bg-blue transition-all"
-                style={{ width: `${ocrProgress}%` }}
-              />
+            <div className="mt-2">
+              <p className="text-xs text-muted">Texterkennung läuft… {ocrProgress}%</p>
+              <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface2">
+                <div
+                  className="h-full bg-blue transition-all"
+                  style={{ width: `${ocrProgress}%` }}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -247,6 +275,24 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
             2. Inhalt
           </h2>
           <PodcastSearch episodes={podcasts} />
+        </section>
+      )}
+
+      {uploadedFile && (
+        <section>
+          <h2 className="mb-3 font-display text-lg font-bold text-fg">
+            2. Inhalt
+          </h2>
+          <div className="rounded-xl border border-white/10 bg-surface p-4">
+            <p className="flex items-center gap-2 text-sm font-medium text-mint">
+              <span>✓</span>
+              Datei geladen: {uploadedFile.name}
+            </p>
+            <div className="mt-3 max-h-[60vh] overflow-y-auto rounded-xl border border-white/10 bg-surface2 p-3 text-sm leading-relaxed text-fg">
+              {uploadedFile.preview}
+              {uploadedFile.preview.length >= 1500 && "…"}
+            </div>
+          </div>
         </section>
       )}
     </>
