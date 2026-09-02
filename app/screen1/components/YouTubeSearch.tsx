@@ -41,26 +41,28 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {videos.map((video) => (
           <button
             key={video.videoId}
             type="button"
             onClick={() => selectVideo(video.videoId)}
-            className={`rounded-lg border p-2 text-left text-xs transition ${
+            className={`rounded-xl border p-2 text-left text-xs transition ${
               selectedVideoId === video.videoId
-                ? "border-amber-500 ring-2 ring-amber-300"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-gold ring-2 ring-gold/40"
+                : "border-ink/10 hover:border-ink/25"
             }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={video.thumbnail}
               alt={video.title}
-              className="mb-1 w-full rounded"
+              className="mb-1 w-full rounded-lg"
             />
-            <div className="line-clamp-2 font-medium">{video.title}</div>
-            <div className="text-gray-500">
+            <div className="line-clamp-2 font-medium text-ink">
+              {video.title}
+            </div>
+            <div className="text-slate">
               {video.channelTitle} · {video.duration}
             </div>
           </button>
@@ -69,7 +71,7 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
 
       {selectedVideoId && (
         <div className="mt-4">
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
+          <div className="aspect-video w-full overflow-hidden rounded-xl">
             <iframe
               className="h-full w-full"
               src={`https://www.youtube.com/embed/${selectedVideoId}?hl=de&cc_lang_pref=de&cc_load_policy=1`}
@@ -82,19 +84,19 @@ export default function YouTubeSearch({ videos, topicId, topicTitle }: Props) {
             type="button"
             onClick={handleLoadTranscript}
             disabled={loadingTranscript}
-            className="mt-2 rounded bg-gray-800 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+            className="mt-2 rounded-xl bg-navy px-3 py-2 text-sm font-medium text-parchment disabled:opacity-40"
           >
             {loadingTranscript ? "Lädt…" : "Transkript laden"}
           </button>
 
           {transcriptUnavailable && (
-            <p className="mt-2 text-sm text-red-600">
+            <p className="mt-2 text-sm text-rust">
               Kein Transkript verfügbar. Bitte ein anderes Video wählen.
             </p>
           )}
 
           {transcript && (
-            <div className="mt-3 max-h-[60vh] overflow-y-auto rounded border border-gray-100 bg-gray-50 p-3 text-sm leading-relaxed">
+            <div className="mt-3 max-h-[60vh] overflow-y-auto rounded-xl border border-ink/10 bg-parchment p-3 text-sm leading-relaxed text-ink">
               {transcript}
             </div>
           )}

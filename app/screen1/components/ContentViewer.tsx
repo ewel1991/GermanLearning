@@ -96,11 +96,16 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
   }
 
   return (
-    <section className="rounded-lg border border-gray-200 bg-white p-4">
-      <h2 className="mb-3 font-semibold">Content Viewer</h2>
+    <section className="rounded-xl border border-ink/10 bg-paper p-4 md:p-5">
+      <h2 className="mb-3 font-display text-lg font-semibold text-ink">
+        Inhalt
+      </h2>
 
+      <label className="mb-1 block text-sm font-medium text-slate">
+        Thema
+      </label>
       <select
-        className="w-full rounded border border-gray-300 p-2 text-sm"
+        className="w-full rounded-xl border border-ink/15 bg-paper p-2.5 text-sm text-ink"
         value={selectedTopicId ?? ""}
         onChange={(e) => setSelectedTopicId(Number(e.target.value))}
       >
@@ -117,28 +122,28 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
         ))}
       </select>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 grid grid-cols-2 gap-1 rounded-xl bg-parchment p-1">
         <button
           type="button"
           onClick={() => setContentType("article")}
-          className={`rounded px-3 py-1.5 text-sm font-medium ${
+          className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
             contentType === "article"
-              ? "bg-gray-800 text-white"
-              : "bg-gray-100 text-gray-700"
+              ? "bg-navy text-parchment"
+              : "text-slate hover:text-ink"
           }`}
         >
-          📄 Artikel
+          Artikel
         </button>
         <button
           type="button"
           onClick={() => setContentType("youtube")}
-          className={`rounded px-3 py-1.5 text-sm font-medium ${
+          className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
             contentType === "youtube"
-              ? "bg-gray-800 text-white"
-              : "bg-gray-100 text-gray-700"
+              ? "bg-navy text-parchment"
+              : "text-slate hover:text-ink"
           }`}
         >
-          ▶ YouTube
+          YouTube
         </button>
       </div>
 
@@ -146,12 +151,12 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
         type="button"
         onClick={handleSearch}
         disabled={loading || !selectedTopic}
-        className="mt-3 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="mt-3 w-full rounded-xl bg-gold px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-gold-deep disabled:opacity-40 sm:w-auto"
       >
         {loading ? "Suche läuft…" : "Suchen"}
       </button>
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-rust">{error}</p>}
 
       {contentType === "article" && article && (
         <div className="mt-4">
@@ -169,20 +174,20 @@ export default function ContentViewer({ topics }: { topics: Topic[] }) {
         </div>
       )}
 
-      <div className="mt-4 border-t border-gray-100 pt-4">
-        <label className="block text-sm font-medium text-gray-700">
+      <div className="mt-4 border-t border-ink/10 pt-4">
+        <label className="block text-sm font-medium text-slate">
           Eigene Datei hochladen (.txt oder Bild)
         </label>
         <input
           type="file"
           accept=".txt,.png,.jpg,.jpeg,.webp"
           onChange={handleFileChange}
-          className="mt-1 text-sm"
+          className="mt-2 block w-full text-sm text-slate file:mr-3 file:rounded-lg file:border-0 file:bg-navy file:px-3 file:py-2 file:text-sm file:font-medium file:text-parchment"
         />
         {ocrProgress !== null && (
-          <div className="mt-2 h-2 w-full overflow-hidden rounded bg-gray-100">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-parchment">
             <div
-              className="h-full bg-blue-600 transition-all"
+              className="h-full bg-gold transition-all"
               style={{ width: `${ocrProgress}%` }}
             />
           </div>

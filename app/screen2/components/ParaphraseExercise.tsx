@@ -35,12 +35,14 @@ export default function ParaphraseExercise({ baseSentence, structureName }: Prop
   }
 
   return (
-    <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4">
-      <h2 className="mb-2 font-semibold">Übung</h2>
-      <p className="rounded border border-gray-100 bg-gray-50 p-2 text-sm italic">
+    <div className="mt-4 rounded-xl border border-ink/10 bg-paper p-4">
+      <h2 className="mb-2 font-display text-lg font-semibold text-ink">
+        Übung
+      </h2>
+      <p className="rounded-lg border border-ink/10 bg-parchment p-2 text-sm italic text-ink">
         {baseSentence}
       </p>
-      <p className="mt-2 text-sm text-gray-700">
+      <p className="mt-2 text-sm text-ink/80">
         Formen Sie den Satz um. Verwenden Sie: {structureName}.
       </p>
 
@@ -48,7 +50,7 @@ export default function ParaphraseExercise({ baseSentence, structureName }: Prop
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         rows={3}
-        className="mt-2 w-full resize-y rounded border border-gray-300 p-2 text-sm"
+        className="mt-2 w-full resize-y rounded-xl border border-ink/15 bg-paper p-2.5 text-sm text-ink"
         placeholder="Ihre Umformung…"
       />
 
@@ -56,12 +58,12 @@ export default function ParaphraseExercise({ baseSentence, structureName }: Prop
         type="button"
         onClick={handleSubmit}
         disabled={loading || answer.trim().length === 0}
-        className="mt-2 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="mt-2 w-full rounded-xl bg-gold px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-gold-deep disabled:opacity-40 sm:w-auto"
       >
         {loading ? "Bewertet…" : "Bewertung anfordern"}
       </button>
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-rust">{error}</p>}
 
       {evaluation && <EvaluationPanel result={evaluation} />}
     </div>

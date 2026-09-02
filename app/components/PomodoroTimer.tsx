@@ -32,10 +32,10 @@ export default function PomodoroTimer() {
   }, [justFinishedSlot]);
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="relative flex items-center gap-1.5">
       <div
-        className={`flex items-center gap-2 rounded px-2 py-1 text-sm ${
-          pulsing ? "animate-pulse bg-green-100 text-green-700" : "bg-gray-100"
+        className={`flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-sm ${
+          pulsing ? "animate-pulse bg-moss text-white" : "bg-navy-light text-parchment"
         }`}
       >
         <span className="font-medium">{activeSlotLabel}</span>
@@ -46,7 +46,7 @@ export default function PomodoroTimer() {
         type="button"
         onClick={start}
         disabled={isRunning}
-        className="rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
+        className="rounded-xl bg-gold px-2.5 py-1.5 text-xs font-medium text-ink disabled:opacity-40"
       >
         Start
       </button>
@@ -54,20 +54,20 @@ export default function PomodoroTimer() {
         type="button"
         onClick={pause}
         disabled={!isRunning}
-        className="rounded bg-gray-600 px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
+        className="rounded-xl bg-navy-light px-2.5 py-1.5 text-xs font-medium text-parchment disabled:opacity-40"
       >
         Pause
       </button>
       <button
         type="button"
         onClick={reset}
-        className="rounded bg-gray-200 px-2 py-1 text-xs font-medium text-gray-700"
+        className="rounded-xl px-2.5 py-1.5 text-xs font-medium text-parchment/70 hover:text-parchment"
       >
         Reset
       </button>
 
       {justFinishedSlot !== null && (
-        <div className="absolute right-0 top-full mt-2 rounded bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+        <div className="absolute right-0 top-full mt-2 rounded-xl bg-moss px-3 py-1.5 text-xs font-medium text-white shadow-lg">
           Zeit für Screen {justFinishedSlot + 1}!
         </div>
       )}

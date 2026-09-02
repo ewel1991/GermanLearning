@@ -10,7 +10,7 @@ interface Props {
   topic: CurrentTopic;
 }
 
-// Wraps the term's first occurrence in the example sentence with an amber
+// Wraps the term's first occurrence in the example sentence with a gold
 // highlight. Simple case-insensitive substring match — approximate for
 // inflected word forms, which is acceptable for a first pass.
 function highlightTerm(sentence: string, term: string): React.ReactNode {
@@ -19,7 +19,7 @@ function highlightTerm(sentence: string, term: string): React.ReactNode {
   return (
     <>
       {sentence.slice(0, index)}
-      <span className="font-medium text-amber-600">
+      <span className="font-medium text-gold-deep">
         {sentence.slice(index, index + term.length)}
       </span>
       {sentence.slice(index + term.length)}
@@ -45,15 +45,17 @@ export default function VocabCard({ item, topic }: Props) {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3">
-      <div className="font-bold">{item.term}</div>
-      <p className="mt-1 text-sm text-gray-700">{item.definition_de}</p>
-      <p className="mt-1 text-sm italic text-gray-600">
+    <div className="rounded-xl border border-ink/10 bg-parchment p-3">
+      <div className="font-display text-base font-semibold text-ink">
+        {item.term}
+      </div>
+      <p className="mt-1 text-sm text-ink/80">{item.definition_de}</p>
+      <p className="mt-1 text-sm italic text-slate">
         {highlightTerm(item.example_sentence, item.term)}
       </p>
 
       {saved ? (
-        <span className="mt-2 inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+        <span className="mt-2 inline-block rounded-full bg-moss/15 px-2.5 py-1 text-xs font-medium text-moss">
           ✓ Gespeichert
         </span>
       ) : (
@@ -61,7 +63,7 @@ export default function VocabCard({ item, topic }: Props) {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="mt-2 rounded bg-gray-800 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+          className="mt-2 rounded-lg bg-navy px-3 py-1.5 text-xs font-medium text-parchment disabled:opacity-40"
         >
           {saving ? "Speichert…" : "Speichern"}
         </button>

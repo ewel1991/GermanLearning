@@ -11,7 +11,9 @@ export default async function Screen1Page() {
 
   return (
     <main className="mx-auto max-w-6xl p-4 md:p-8">
-      <h1 className="mb-6 text-2xl font-semibold">Deutsch Lernen — B2/C1</h1>
+      <h1 className="mb-6 font-display text-2xl font-semibold text-ink">
+        Deutsch Lernen — B2/C1
+      </h1>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <ContentViewer topics={topics} />
         <VocabularyPanel />

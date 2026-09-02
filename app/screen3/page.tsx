@@ -106,7 +106,7 @@ export default function Screen3Page() {
   if (initLoading) {
     return (
       <main className="mx-auto max-w-6xl p-4 md:p-8">
-        <p className="text-sm text-gray-600">Bereitet Gespräch vor…</p>
+        <p className="text-sm text-slate">Bereitet Gespräch vor…</p>
       </main>
     );
   }
@@ -114,14 +114,16 @@ export default function Screen3Page() {
   if (initError) {
     return (
       <main className="mx-auto max-w-6xl p-4 md:p-8">
-        <p className="text-sm text-red-600">{initError}</p>
+        <p className="text-sm text-rust">{initError}</p>
       </main>
     );
   }
 
   return (
     <main className="mx-auto max-w-6xl p-4 md:p-8">
-      <h1 className="mb-6 text-2xl font-semibold">KI-Tutor</h1>
+      <h1 className="mb-6 font-display text-2xl font-semibold text-ink">
+        KI-Tutor
+      </h1>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_2fr]">
         <ChatPanel messages={messages} sending={sending} onSend={handleSend} />
         <FeedbackPanel feedback={feedback} />

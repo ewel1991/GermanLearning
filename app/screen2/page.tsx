@@ -40,10 +40,10 @@ export default function Screen2Page() {
   if (article === "") {
     return (
       <main className="mx-auto max-w-2xl p-4 md:p-8">
-        <p className="text-gray-700">
+        <p className="text-slate">
           Bitte zuerst einen Artikel in Screen 1 laden.
         </p>
-        <Link href="/screen1" className="mt-2 inline-block text-blue-600 hover:underline">
+        <Link href="/screen1" className="mt-2 inline-block text-sm font-medium text-gold-deep hover:underline">
           Zu Screen 1
         </Link>
       </main>
@@ -52,10 +52,12 @@ export default function Screen2Page() {
 
   return (
     <main className="mx-auto max-w-3xl p-4 md:p-8">
-      <h1 className="mb-6 text-2xl font-semibold">Grammatik & Umformung</h1>
+      <h1 className="mb-6 font-display text-2xl font-semibold text-ink">
+        Grammatik &amp; Umformung
+      </h1>
 
-      {loading && <p className="text-sm text-gray-600">Analysiert Artikel…</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {loading && <p className="text-sm text-slate">Analysiert Artikel…</p>}
+      {error && <p className="text-sm text-rust">{error}</p>}
 
       {grammar && (
         <>

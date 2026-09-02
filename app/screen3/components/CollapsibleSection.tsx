@@ -16,20 +16,24 @@ export default function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white">
+    <div className="rounded-xl border border-ink/10 bg-paper">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between p-3 text-left font-semibold"
+        className="flex w-full items-center justify-between p-3 text-left font-display font-semibold text-ink"
       >
         {title}
         <span
-          className={`transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+          className={`text-slate transition-transform ${open ? "rotate-180" : "rotate-0"}`}
         >
           ▾
         </span>
       </button>
-      {open && <div className="border-t border-gray-100 p-3 text-sm">{children}</div>}
+      {open && (
+        <div className="border-t border-ink/10 p-3 text-sm text-ink/80">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
