@@ -1,6 +1,6 @@
 "use server";
 
-import Anthropic from "@anthropic-ai/sdk";
+import { getAnthropicClient, describeAnthropicError } from "@/lib/anthropicClient";
 import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { VocabExtractionItem, ActionError } from "@/lib/types";
 
@@ -29,7 +29,7 @@ export async function extractVocabulary(
     return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
   }
 
-  const client = new Anthropic();
+  const client = getAnthropicClient();
 
   let raw: string;
   try {
@@ -48,12 +48,7 @@ export async function extractVocabulary(
     raw = textBlock.text;
   } catch (err) {
     console.error("extractVocabulary: Claude request failed:", err);
-    if (err instanceof Anthropic.APIError) {
-      return {
-        error: `Anfrage an Claude ist fehlgeschlagen (${err.status}): ${err.message}`,
-      };
-    }
-    return { error: "Anfrage an Claude ist fehlgeschlagen." };
+    return { error: describeAnthropicError(err) };
   }
 
   try {

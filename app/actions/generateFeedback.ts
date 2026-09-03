@@ -1,6 +1,6 @@
 "use server";
 
-import Anthropic from "@anthropic-ai/sdk";
+import { getAnthropicClient, describeAnthropicError } from "@/lib/anthropicClient";
 import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { ActionError } from "@/lib/types";
 
@@ -37,7 +37,7 @@ export async function generateFeedback(
     return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
   }
 
-  const client = new Anthropic();
+  const client = getAnthropicClient();
 
   let raw: string;
   try {
@@ -54,8 +54,9 @@ export async function generateFeedback(
       return { error: "Claude hat keinen Text zurückgegeben." };
     }
     raw = textBlock.text;
-  } catch {
-    return { error: "Anfrage an Claude ist fehlgeschlagen." };
+  } catch (err) {
+    console.error("generateFeedback: Claude request failed:", err);
+    return { error: describeAnthropicError(err) };
   }
 
   try {

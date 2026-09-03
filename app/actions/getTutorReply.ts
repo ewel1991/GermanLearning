@@ -1,6 +1,6 @@
 "use server";
 
-import Anthropic from "@anthropic-ai/sdk";
+import { getAnthropicClient, describeAnthropicError } from "@/lib/anthropicClient";
 import type { ActionError } from "@/lib/types";
 
 // Shared across page.tsx and ChatPanel.tsx — this file anchors the type,
@@ -50,7 +50,7 @@ export async function getTutorReply(
     return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
   }
 
-  const client = new Anthropic();
+  const client = getAnthropicClient();
 
   const messages = input.history.map((message) => ({
     role: (message.role === "tutor" ? "assistant" : "user") as
@@ -78,7 +78,8 @@ export async function getTutorReply(
     }
 
     return { reply: textBlock.text };
-  } catch {
-    return { error: "Anfrage an Claude ist fehlgeschlagen." };
+  } catch (err) {
+    console.error("getTutorReply: Claude request failed:", err);
+    return { error: describeAnthropicError(err) };
   }
 }

@@ -57,6 +57,9 @@ Open [http://localhost:3000](http://localhost:3000) — it redirects straight to
 **API key not working**
 The app surfaces its own error messages inline instead of crashing — look for text like `ANTHROPIC_API_KEY ist nicht gesetzt.` or `Anfrage an Claude ist fehlgeschlagen.` on the page. Fix: confirm the real key is in `.env.local` (not just `.env.local.example`, and not shadowed by a stray `.env`), then **restart** `npm run dev` — Next.js only reads environment variables when the server starts, so edits to `.env.local` need a restart to take effect.
 
+**`Anfrage an Claude ist fehlgeschlagen (400): ... anthropic-workspace-id is required ...`**
+Your API key is "identity-linked" (tied to your Console account across workspaces) rather than scoped to a single workspace, so the API needs to be told which workspace to act in. Fix: add `ANTHROPIC_WORKSPACE_ID=wrkspc_...` (the id of the workspace the key should act in, from that workspace's Console settings) alongside `ANTHROPIC_API_KEY` — in `.env.local` for local dev, and in the Vercel project's Environment Variables for production, then redeploy/restart.
+
 **`data/vocabulary.json` write errors (fs write fails)**
 If saving a vocab item silently does nothing, or the terminal shows an `EPERM`/`EACCES` error, check that `data/vocabulary.json` isn't marked read-only, isn't open/locked in another program (some editors and sync tools lock JSON files), and that the account running `npm run dev` has write permission to the `data/` folder.
 

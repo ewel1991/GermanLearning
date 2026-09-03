@@ -1,6 +1,6 @@
 "use server";
 
-import Anthropic from "@anthropic-ai/sdk";
+import { getAnthropicClient, describeAnthropicError } from "@/lib/anthropicClient";
 import { parseClaudeJson } from "@/lib/parseClaudeJson";
 import type { ActionError } from "@/lib/types";
 
@@ -27,7 +27,7 @@ export async function generateQuestions(
     return { error: "ANTHROPIC_API_KEY ist nicht gesetzt." };
   }
 
-  const client = new Anthropic();
+  const client = getAnthropicClient();
 
   const userMessage = `Thema: ${input.topic}
 Vokabeln: ${input.terms.length > 0 ? input.terms.join(", ") : "(keine)"}`;
@@ -47,8 +47,9 @@ Vokabeln: ${input.terms.length > 0 ? input.terms.join(", ") : "(keine)"}`;
       return { error: "Claude hat keinen Text zurückgegeben." };
     }
     raw = textBlock.text;
-  } catch {
-    return { error: "Anfrage an Claude ist fehlgeschlagen." };
+  } catch (err) {
+    console.error("generateQuestions: Claude request failed:", err);
+    return { error: describeAnthropicError(err) };
   }
 
   try {
