@@ -46,7 +46,13 @@ export async function extractVocabulary(
       return { error: "Claude hat keinen Text zurückgegeben." };
     }
     raw = textBlock.text;
-  } catch {
+  } catch (err) {
+    console.error("extractVocabulary: Claude request failed:", err);
+    if (err instanceof Anthropic.APIError) {
+      return {
+        error: `Anfrage an Claude ist fehlgeschlagen (${err.status}): ${err.message}`,
+      };
+    }
     return { error: "Anfrage an Claude ist fehlgeschlagen." };
   }
 
